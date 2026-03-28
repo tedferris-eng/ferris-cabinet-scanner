@@ -311,7 +311,7 @@ Rules:
 - Return ONLY a valid JSON array, no markdown, no explanation
 - Return [] if no cabinetry visible`;
 
-    const response = await fetch('/api/analyze', {
+    const response = await fetch('/.netlify/functions/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

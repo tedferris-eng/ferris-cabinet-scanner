@@ -167,7 +167,7 @@
       <div class="table-wrap">
         <table>
           <thead><tr>
-            <th>Room / Space</th><th>Cabinet Type</th><th>Qty</th><th>Approx. Dimensions</th><th>Location / Wall</th>
+            <th>Room / Space</th><th>Wall / Location</th><th>Base (LF)</th><th>Upper (LF)</th><th>Tall (LF)</th><th>Total (LF)</th><th>Notes</th>
           </tr></thead>
           <tbody id="resultsBody"></tbody>
         </table>
@@ -267,7 +267,7 @@
         if (pageResults.length > 0) {
           allResults.push(...pageResults);
           log(`Page ${i}: found ${pageResults.length} cabinet group${pageResults.length !== 1 ? 's' : ''}`, 'ok');
-          pageResults.forEach(r => log(`  → ${r.room} | ${r.cabinet_type} | ${r.location || '—'}`, 'ok'));
+          pageResults.forEach(r => log(`  → ${r.room} | ${r.location||'—'} | Base:${r.base_lf||0}LF Upper:${r.upper_lf||0}LF Tall:${r.tall_lf||0}LF`, 'ok'));
         } else {
           log(`Page ${i}: no cabinetry identified`, 'warn');
         }
@@ -291,25 +291,32 @@
   }
 
   async function analyzeWithClaude(base64Image, pageNum, totalPages) {
-    const prompt = `You are an expert architectural plan reader for Ferris Cabinetry.
+    const prompt = `You are an expert architectural plan reader for Ferris Cabinetry, a cabinetry company that needs lineal footage estimates from floor plans.
 
 This is page ${pageNum} of ${totalPages} of a residential architectural floor plan.
-Identify EVERY room or space with cabinetry. Do not miss any room.
 
-Common rooms: Kitchen, Bathrooms, Laundry, Mudroom, Office, Bar, Pantry, Utility, Closets.
+Your job: identify EVERY wall run of cabinetry in EVERY room. For each wall or location with cabinets, estimate the lineal footage of base cabinets, upper (wall) cabinets, and tall cabinets separately by measuring against the plan's scale or room dimensions shown.
 
-For each distinct cabinet run return a JSON object:
-- "room": room name as labeled on the plan
-- "cabinet_type": one of: "Base Cabinet", "Upper Cabinet", "Tall Cabinet", "Island", "Vanity", "Linen Cabinet", "Pantry Cabinet", "Medicine Cabinet", "Built-in", "Other"
-- "qty": integer count of units (null if unclear)
-- "dimensions": e.g. "24\\"D x 34.5\\"H" (base=24"D, upper=12"D, tall=24"D)
-- "location": wall or position e.g. "North wall", "South wall", "Center island"
+Common rooms to check: Kitchen, Master Bath, Bathrooms, Powder Room, Laundry, Mudroom, Pantry, Bar, Office, Utility, Closets.
 
-Rules:
-- Scan the ENTIRE image — every room, every corner
-- List each wall of a room separately if cabinets run on multiple walls
+For each distinct wall or cabinet run, return a JSON object with:
+- "room": room name exactly as labeled on the plan
+- "location": which wall or position (e.g. "North wall", "South wall", "Island", "East wall")
+- "base_lf": lineal feet of base cabinets (floor-mounted, 34.5" tall) — number or null
+- "upper_lf": lineal feet of upper/wall cabinets (wall-mounted above counter) — number or null
+- "tall_lf": lineal feet of tall cabinets (floor-to-ceiling: pantry towers, oven surrounds, fridge surrounds) — number or null
+- "notes": brief note on anything notable (e.g. "includes island", "refrigerator opening", "window above sink")
+
+Important rules:
+- Scan the ENTIRE image carefully before responding — every room, every wall
+- Use the plan's dimension annotations or scale bar to estimate lineal footage as accurately as possible
+- A standard kitchen base run might be 8–12 LF per wall; a bathroom vanity 3–6 LF
+- List each wall separately — do not combine multiple walls into one entry
+- Island base cabinets count as base_lf with location "Island"
+- Vanities count as base_lf
+- If upper cabinets don't run the full length of base cabinets, estimate separately
 - Return ONLY a valid JSON array, no markdown, no explanation
-- Return [] if no cabinetry visible`;
+- Return [] only if this page has truly no cabinetry (e.g. cover sheet, site plan)`;
 
     const response = await fetch('/.netlify/functions/analyze', {
       method: 'POST',
@@ -343,22 +350,23 @@ Rules:
   function deduplicateResults(results) {
     const map = new Map();
     for (const r of results) {
-      const key = `${norm(r.room)}|${norm(r.cabinet_type)}|${norm(r.location)}`;
+      const key = `${norm(r.room)}|${norm(r.location)}`;
       if (!map.has(key)) map.set(key, { ...r });
-      else { const ex = map.get(key); if (r.qty && ex.qty) ex.qty = Math.max(ex.qty, r.qty); }
+      else {
+        const ex = map.get(key);
+        ex.base_lf  = Math.max(ex.base_lf  || 0, r.base_lf  || 0) || null;
+        ex.upper_lf = Math.max(ex.upper_lf || 0, r.upper_lf || 0) || null;
+        ex.tall_lf  = Math.max(ex.tall_lf  || 0, r.tall_lf  || 0) || null;
+      }
     }
     return Array.from(map.values());
   }
 
   function norm(s) { return (s||'').toLowerCase().replace(/\s+/g,' ').trim(); }
 
-  function badgeClass(type) {
-    const t = (type||'').toLowerCase();
-    if (t.includes('base')) return 'badge-base';
-    if (t.includes('upper')||t.includes('medicine')) return 'badge-upper';
-    if (t.includes('tall')||t.includes('pantry')||t.includes('linen')) return 'badge-tall';
-    if (t.includes('island')) return 'badge-island';
-    return 'badge-other';
+  function lf(val) {
+    if (val == null || val === 0) return `<span style="color:var(--text-dim)">—</span>`;
+    return `<span class="qty-pill">${Number(val).toFixed(1)}</span>`;
   }
 
   function renderResults(results) {
@@ -368,21 +376,79 @@ Rules:
     document.getElementById('resultCount').textContent = results.length;
     if (!results.length) { document.getElementById('emptyState').style.display = 'block'; return; }
     document.getElementById('emptyState').style.display = 'none';
-    results.sort((a,b) => (a.room||'').localeCompare(b.room||''));
+    results.sort((a,b) => (a.room||'').localeCompare(b.room||'') || (a.location||'').localeCompare(b.location||''));
+
+    // Group by room for subtotal rows
+    let lastRoom = null;
     for (const r of results) {
+      // Room label row if new room
+      if (r.room !== lastRoom) {
+        const roomResults = results.filter(x => x.room === r.room);
+        const totalBase  = roomResults.reduce((s,x) => s + (x.base_lf  || 0), 0);
+        const totalUpper = roomResults.reduce((s,x) => s + (x.upper_lf || 0), 0);
+        const totalTall  = roomResults.reduce((s,x) => s + (x.tall_lf  || 0), 0);
+        const grandTotal = totalBase + totalUpper + totalTall;
+        if (lastRoom !== null) {
+          // subtotal row for previous room
+          const sub = document.createElement('tr');
+          sub.style.cssText = 'background:rgba(46,134,222,0.07); font-weight:600;';
+          const prevRoomResults = results.filter(x => x.room === lastRoom);
+          const pb = prevRoomResults.reduce((s,x) => s+(x.base_lf||0),0);
+          const pu = prevRoomResults.reduce((s,x) => s+(x.upper_lf||0),0);
+          const pt = prevRoomResults.reduce((s,x) => s+(x.tall_lf||0),0);
+          const pg = pb+pu+pt;
+          sub.innerHTML = `<td style="color:var(--text-dim); font-size:0.7rem; font-family:var(--mono); letter-spacing:0.08em;" colspan="2">SUBTOTAL — ${lastRoom}</td><td><span class="qty-pill" style="color:var(--blue-light)">${pb.toFixed(1)}</span></td><td><span class="qty-pill" style="color:var(--amber)">${pu.toFixed(1)}</span></td><td><span class="qty-pill" style="color:var(--green)">${pt.toFixed(1)}</span></td><td><span class="qty-pill" style="border-color:var(--blue-light); color:var(--text-bright)">${pg.toFixed(1)}</span></td><td></td>`;
+          tbody.appendChild(sub);
+        }
+        lastRoom = r.room;
+      }
+
+      const total = (r.base_lf||0) + (r.upper_lf||0) + (r.tall_lf||0);
       const tr = document.createElement('tr');
-      const qty = r.qty != null ? `<span class="qty-pill">${r.qty}</span>` : `<span class="qty-pill" style="color:var(--text-dim)">—</span>`;
-      tr.innerHTML = `<td>${r.room||'—'}</td><td><span class="badge ${badgeClass(r.cabinet_type)}">${r.cabinet_type||'Other'}</span></td><td>${qty}</td><td><span class="dim-text">${r.dimensions||'—'}</span></td><td>${r.location||'—'}</td>`;
+      tr.innerHTML = `
+        <td>${r.room||'—'}</td>
+        <td style="color:var(--text-dim)">${r.location||'—'}</td>
+        <td>${lf(r.base_lf)}</td>
+        <td>${lf(r.upper_lf)}</td>
+        <td>${lf(r.tall_lf)}</td>
+        <td>${total > 0 ? lf(total) : lf(null)}</td>
+        <td><span class="dim-text">${r.notes||''}</span></td>`;
       tbody.appendChild(tr);
     }
+
+    // Final subtotal
+    if (lastRoom) {
+      const prevRoomResults = results.filter(x => x.room === lastRoom);
+      const pb = prevRoomResults.reduce((s,x) => s+(x.base_lf||0),0);
+      const pu = prevRoomResults.reduce((s,x) => s+(x.upper_lf||0),0);
+      const pt = prevRoomResults.reduce((s,x) => s+(x.tall_lf||0),0);
+      const pg = pb+pu+pt;
+      const sub = document.createElement('tr');
+      sub.style.cssText = 'background:rgba(46,134,222,0.07); font-weight:600;';
+      sub.innerHTML = `<td style="color:var(--text-dim); font-size:0.7rem; font-family:var(--mono); letter-spacing:0.08em;" colspan="2">SUBTOTAL — ${lastRoom}</td><td><span class="qty-pill" style="color:var(--blue-light)">${pb.toFixed(1)}</span></td><td><span class="qty-pill" style="color:var(--amber)">${pu.toFixed(1)}</span></td><td><span class="qty-pill" style="color:var(--green)">${pt.toFixed(1)}</span></td><td><span class="qty-pill" style="border-color:var(--blue-light); color:var(--text-bright)">${pg.toFixed(1)}</span></td><td></td>`;
+      tbody.appendChild(sub);
+    }
+
+    // Grand total row
+    const allBase  = results.reduce((s,x) => s+(x.base_lf ||0),0);
+    const allUpper = results.reduce((s,x) => s+(x.upper_lf||0),0);
+    const allTall  = results.reduce((s,x) => s+(x.tall_lf ||0),0);
+    const allTotal = allBase + allUpper + allTall;
+    const grand = document.createElement('tr');
+    grand.style.cssText = 'background:rgba(46,134,222,0.13); font-weight:700; border-top: 2px solid var(--border);';
+    grand.innerHTML = `<td style="font-family:var(--mono); font-size:0.7rem; letter-spacing:0.1em;" colspan="2">GRAND TOTAL</td><td><span class="qty-pill" style="color:var(--blue-light); font-weight:700">${allBase.toFixed(1)}</span></td><td><span class="qty-pill" style="color:var(--amber); font-weight:700">${allUpper.toFixed(1)}</span></td><td><span class="qty-pill" style="color:var(--green); font-weight:700">${allTall.toFixed(1)}</span></td><td><span class="qty-pill" style="border-color:var(--blue-light); color:var(--text-bright); font-weight:700">${allTotal.toFixed(1)}</span></td><td></td>`;
+    tbody.appendChild(grand);
   }
 
   function exportCSV() {
     if (!allResults.length) return;
     const rows = deduplicateResults(allResults);
-    rows.sort((a,b) => (a.room||'').localeCompare(b.room||''));
-    const headers = ['Room / Space','Cabinet Type','Qty','Approx. Dimensions','Location / Wall'];
-    const csv = [headers, ...rows.map(r => [esc(r.room), esc(r.cabinet_type), r.qty??'', esc(r.dimensions), esc(r.location)])].map(r => r.join(',')).join('\n');
+    rows.sort((a,b) => (a.room||'').localeCompare(b.room||'') || (a.location||'').localeCompare(b.location||''));
+    const headers = ['Room / Space','Wall / Location','Base LF','Upper LF','Tall LF','Total LF','Notes'];
+    const csv = [headers, ...rows.map(r => {
+      const total = (r.base_lf||0)+(r.upper_lf||0)+(r.tall_lf||0);
+      return [esc(r.room), esc(r.location), r.base_lf??'', r.upper_lf??'', r.tall_lf??'', total||'', esc(r.notes)];
+    })].map(r => r.join(',')).join('\n');
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
     a.download = `${(selectedFile?.name||'plan').replace('.pdf','')}-cabinetry-schedule.csv`;

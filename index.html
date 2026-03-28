@@ -22,463 +22,84 @@
     --mono: 'IBM Plex Mono', monospace;
     --sans: 'IBM Plex Sans', sans-serif;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    min-height: 100vh;
-    background-image:
-      linear-gradient(rgba(46,134,222,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(46,134,222,0.03) 1px, transparent 1px);
+    background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh;
+    background-image: linear-gradient(rgba(46,134,222,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(46,134,222,0.03) 1px, transparent 1px);
     background-size: 40px 40px;
   }
-
-  header {
-    border-bottom: 1px solid var(--border);
-    background: rgba(11,21,32,0.95);
-    backdrop-filter: blur(10px);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    padding: 0 2rem;
-  }
-
-  .header-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    height: 60px;
-  }
-
-  .logo {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
-    color: var(--blue-light);
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-  }
-
-  .logo-icon {
-    width: 28px;
-    height: 28px;
-    border: 1.5px solid var(--blue);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-  }
-
-  .logo-sep { color: var(--border); font-size: 1.2rem; }
-
-  .logo-sub {
-    color: var(--text-dim);
-    font-size: 0.65rem;
-    letter-spacing: 0.08em;
-  }
-
-  main {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 2.5rem 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-  }
-
-  /* SECTION CARD */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .card-header {
-    background: var(--surface2);
-    border-bottom: 1px solid var(--border);
-    padding: 0.75rem 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-  }
-
-  .card-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--blue);
-  }
-
+  header { border-bottom: 1px solid var(--border); background: rgba(11,21,32,0.95); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; padding: 0 2rem; }
+  .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 1rem; height: 60px; }
+  .logo { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.15em; color: var(--blue-light); text-transform: uppercase; display: flex; align-items: center; gap: 0.6rem; }
+  .logo-icon { width: 28px; height: 28px; border: 1.5px solid var(--blue); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
+  .logo-sub { color: var(--text-dim); font-size: 0.65rem; letter-spacing: 0.08em; }
+  .ai-badge { margin-left: auto; font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.08em; padding: 0.3rem 0.7rem; border: 1px solid rgba(84,160,255,0.3); background: rgba(84,160,255,0.07); color: var(--blue-light); border-radius: 2px; }
+  main { max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem; display: flex; flex-direction: column; gap: 2rem; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
+  .card-header { background: var(--surface2); border-bottom: 1px solid var(--border); padding: 0.75rem 1.25rem; display: flex; align-items: center; gap: 0.6rem; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); }
+  .card-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
   .card-body { padding: 1.5rem; }
-
-  /* API KEY SECTION */
-  .api-notice {
-    background: rgba(46,134,222,0.07);
-    border: 1px solid rgba(46,134,222,0.25);
-    border-radius: 2px;
-    padding: 0.9rem 1.1rem;
-    font-size: 0.82rem;
-    color: var(--text-dim);
-    line-height: 1.6;
-    margin-bottom: 1rem;
-  }
-
-  .api-notice a {
-    color: var(--blue-light);
-    text-decoration: none;
-    font-weight: 500;
-  }
-
-  .api-notice a:hover { text-decoration: underline; }
-
-  .steps {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    margin-top: 0.6rem;
-  }
-
-  .step {
-    display: flex;
-    gap: 0.6rem;
-    align-items: baseline;
-  }
-
-  .step-num {
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    color: var(--blue);
-    min-width: 1.2rem;
-  }
-
-  .field-row {
-    display: flex;
-    gap: 0.75rem;
-    align-items: stretch;
-  }
-
-  input[type="text"], input[type="password"] {
-    flex: 1;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text-bright);
-    font-family: var(--mono);
-    font-size: 0.82rem;
-    padding: 0.6rem 0.9rem;
-    border-radius: 2px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  input:focus { border-color: var(--blue); }
-
-  .btn {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 0.6rem 1.2rem;
-    border: 1px solid;
-    border-radius: 2px;
-    cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-  }
-
-  .btn-primary {
-    background: var(--blue);
-    border-color: var(--blue);
-    color: #fff;
-  }
-
-  .btn-primary:hover { background: var(--blue-light); border-color: var(--blue-light); }
-  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  .btn-outline {
-    background: transparent;
-    border-color: var(--border);
-    color: var(--text-dim);
-  }
-
-  .btn-outline:hover { border-color: var(--blue); color: var(--blue-light); }
-
-  .btn-green {
-    background: transparent;
-    border-color: var(--green);
-    color: var(--green);
-  }
-
-  .btn-green:hover { background: rgba(38,222,129,0.1); }
-
-  /* UPLOAD ZONE */
-  .upload-zone {
-    border: 1.5px dashed var(--border);
-    border-radius: 2px;
-    padding: 2.5rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-  }
-
-  .upload-zone:hover, .upload-zone.drag-over {
-    border-color: var(--blue);
-    background: rgba(46,134,222,0.05);
-  }
-
-  .upload-zone input[type="file"] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-  }
-
-  .upload-icon {
-    font-size: 2rem;
-    margin-bottom: 0.75rem;
-    color: var(--text-dim);
-  }
-
-  .upload-label {
-    font-size: 0.9rem;
-    color: var(--text);
-    margin-bottom: 0.3rem;
-  }
-
-  .upload-sub {
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    font-family: var(--mono);
-  }
-
-  .file-selected {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem 1.25rem;
-    background: rgba(46,134,222,0.07);
-    border: 1px solid rgba(46,134,222,0.2);
-    border-radius: 2px;
-    font-size: 0.85rem;
-  }
-
+  .info-banner { background: rgba(38,222,129,0.06); border: 1px solid rgba(38,222,129,0.2); border-radius: 2px; padding: 1rem 1.25rem; font-size: 0.83rem; color: var(--text-dim); line-height: 1.6; display: flex; gap: 1rem; align-items: flex-start; }
+  .info-banner-icon { font-size: 1.3rem; flex-shrink: 0; }
+  .upload-zone { border: 1.5px dashed var(--border); border-radius: 2px; padding: 2.5rem; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; }
+  .upload-zone:hover, .upload-zone.drag-over { border-color: var(--blue); background: rgba(46,134,222,0.05); }
+  .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-icon { font-size: 2rem; margin-bottom: 0.75rem; color: var(--text-dim); }
+  .upload-label { font-size: 0.9rem; color: var(--text); margin-bottom: 0.3rem; }
+  .upload-sub { font-size: 0.75rem; color: var(--text-dim); font-family: var(--mono); }
+  .file-selected { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; background: rgba(46,134,222,0.07); border: 1px solid rgba(46,134,222,0.2); border-radius: 2px; }
   .file-icon { font-size: 1.5rem; }
-
   .file-name { font-family: var(--mono); font-size: 0.8rem; color: var(--blue-light); }
   .file-size { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.15rem; }
-
-  /* PROGRESS */
+  .btn { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.6rem 1.2rem; border: 1px solid; border-radius: 2px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .btn-primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .btn-primary:hover { background: var(--blue-light); border-color: var(--blue-light); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-outline { background: transparent; border-color: var(--border); color: var(--text-dim); }
+  .btn-outline:hover { border-color: var(--blue); color: var(--blue-light); }
+  .btn-green { background: transparent; border-color: var(--green); color: var(--green); }
+  .btn-green:hover { background: rgba(38,222,129,0.1); }
+  .scan-btn-wrap { display: flex; gap: 0.75rem; align-items: center; margin-top: 1.5rem; }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 0.4rem; }
+  .status-idle { background: var(--text-dim); }
+  .status-running { background: var(--amber); animation: pulse 1s infinite; }
+  .status-done { background: var(--green); }
+  .status-error { background: var(--red); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
   .progress-section { display: none; }
   .progress-section.active { display: block; }
-
-  .progress-bar-wrap {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    height: 6px;
-    overflow: hidden;
-    margin: 1rem 0 0.6rem;
-  }
-
-  .progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--blue), var(--blue-light));
-    transition: width 0.4s ease;
-    width: 0%;
-  }
-
-  .progress-meta {
-    display: flex;
-    justify-content: space-between;
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    color: var(--text-dim);
-  }
-
-  .log-area {
-    margin-top: 1rem;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    padding: 0.75rem 1rem;
-    height: 140px;
-    overflow-y: auto;
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    color: var(--text-dim);
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
+  .progress-bar-wrap { background: var(--bg); border: 1px solid var(--border); border-radius: 2px; height: 6px; overflow: hidden; margin: 1rem 0 0.6rem; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--blue-light)); transition: width 0.4s ease; width: 0%; }
+  .progress-meta { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim); }
+  .log-area { margin-top: 1rem; background: var(--bg); border: 1px solid var(--border); border-radius: 2px; padding: 0.75rem 1rem; height: 160px; overflow-y: auto; font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim); display: flex; flex-direction: column; gap: 0.25rem; }
   .log-line { display: flex; gap: 0.6rem; }
   .log-time { color: var(--border); }
   .log-ok { color: var(--green); }
   .log-info { color: var(--blue-light); }
   .log-warn { color: var(--amber); }
   .log-err { color: var(--red); }
-
-  /* RESULTS TABLE */
   .results-section { display: none; }
   .results-section.active { display: block; }
-
-  .results-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1.25rem;
-  }
-
-  .results-count {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    color: var(--text-dim);
-  }
-
+  .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+  .results-count { font-family: var(--mono); font-size: 0.75rem; color: var(--text-dim); }
   .results-count span { color: var(--green); font-size: 0.9rem; }
-
   .table-wrap { overflow-x: auto; }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.83rem;
-  }
-
-  thead tr {
-    background: var(--surface2);
-    border-bottom: 2px solid var(--border);
-  }
-
-  th {
-    text-align: left;
-    padding: 0.7rem 1rem;
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    font-weight: 500;
-    white-space: nowrap;
-  }
-
-  tbody tr {
-    border-bottom: 1px solid rgba(30,58,95,0.5);
-    transition: background 0.1s;
-  }
-
+  table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+  thead tr { background: var(--surface2); border-bottom: 2px solid var(--border); }
+  th { text-align: left; padding: 0.7rem 1rem; font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); font-weight: 500; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid rgba(30,58,95,0.5); transition: background 0.1s; }
   tbody tr:hover { background: rgba(46,134,222,0.04); }
-
-  td {
-    padding: 0.7rem 1rem;
-    color: var(--text);
-    vertical-align: top;
-  }
-
-  td:first-child {
-    font-weight: 500;
-    color: var(--text-bright);
-  }
-
-  .badge {
-    display: inline-block;
-    padding: 0.15rem 0.5rem;
-    border-radius: 2px;
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.06em;
-    font-weight: 600;
-  }
-
-  .badge-base { background: rgba(46,134,222,0.15); color: var(--blue-light); border: 1px solid rgba(46,134,222,0.3); }
-  .badge-upper { background: rgba(249,168,37,0.12); color: var(--amber); border: 1px solid rgba(249,168,37,0.25); }
-  .badge-tall { background: rgba(38,222,129,0.1); color: var(--green); border: 1px solid rgba(38,222,129,0.2); }
+  td { padding: 0.7rem 1rem; color: var(--text); vertical-align: top; }
+  td:first-child { font-weight: 500; color: var(--text-bright); }
+  .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 2px; font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.06em; font-weight: 600; }
+  .badge-base   { background: rgba(46,134,222,0.15); color: var(--blue-light); border: 1px solid rgba(46,134,222,0.3); }
+  .badge-upper  { background: rgba(249,168,37,0.12); color: var(--amber); border: 1px solid rgba(249,168,37,0.25); }
+  .badge-tall   { background: rgba(38,222,129,0.1); color: var(--green); border: 1px solid rgba(38,222,129,0.2); }
   .badge-island { background: rgba(255,71,87,0.1); color: #ff6b81; border: 1px solid rgba(255,71,87,0.2); }
-  .badge-other { background: rgba(107,140,174,0.1); color: var(--text-dim); border: 1px solid var(--border); }
-
-  .qty-pill {
-    display: inline-block;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    padding: 0.1rem 0.45rem;
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    color: var(--text);
-    min-width: 2rem;
-    text-align: center;
-  }
-
-  .dim-text {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    color: var(--text-dim);
-  }
-
-  /* EMPTY STATE */
-  .empty-state {
-    text-align: center;
-    padding: 3rem;
-    color: var(--text-dim);
-    font-size: 0.85rem;
-  }
-
-  .scan-btn-wrap {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-    margin-top: 1.5rem;
-  }
-
-  /* STATUS BADGE */
-  .status-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    display: inline-block;
-    margin-right: 0.4rem;
-  }
-  .status-idle { background: var(--text-dim); }
-  .status-running { background: var(--amber); animation: pulse 1s infinite; }
-  .status-done { background: var(--green); }
-  .status-error { background: var(--red); }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-
-  .section-title {
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--blue);
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
+  .badge-other  { background: rgba(107,140,174,0.1); color: var(--text-dim); border: 1px solid var(--border); }
+  .qty-pill { display: inline-block; background: var(--bg); border: 1px solid var(--border); border-radius: 2px; padding: 0.1rem 0.45rem; font-family: var(--mono); font-size: 0.75rem; min-width: 2rem; text-align: center; }
+  .dim-text { font-family: var(--mono); font-size: 0.75rem; color: var(--text-dim); }
+  .empty-state { text-align: center; padding: 3rem; color: var(--text-dim); font-size: 0.85rem; }
 </style>
 </head>
 <body>
@@ -492,51 +113,33 @@
         <div class="logo-sub">Cabinet Scanner — Architectural Plan Analysis</div>
       </div>
     </div>
+    <div class="ai-badge">⬡ Powered by Claude AI</div>
   </div>
 </header>
 
 <main>
 
-  <!-- STEP 1: API KEY -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-dot"></div>
-      Step 1 — Gemini API Key
-    </div>
-    <div class="card-body">
-      <div class="api-notice">
-        <strong style="color: var(--text);">This app uses Google Gemini Vision AI</strong> — separate from your gemini.google.com account.<br>
-        You need a free API key from Google AI Studio:
-        <div class="steps">
-          <div class="step"><span class="step-num">01.</span> Go to <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com/app/apikey</a></div>
-          <div class="step"><span class="step-num">02.</span> Click <strong style="color:var(--text)">"Create API key"</strong> and copy it</div>
-          <div class="step"><span class="step-num">03.</span> Paste it below — it stays in your browser only, never sent anywhere except Google</div>
-        </div>
-      </div>
-      <div class="field-row">
-        <input type="password" id="apiKey" placeholder="Paste your Gemini API key here  (AIza...)" autocomplete="off">
-        <button class="btn btn-outline" onclick="toggleKeyVisibility()">Show</button>
-        <button class="btn btn-primary" onclick="saveKey()">Save Key</button>
-      </div>
-      <div id="keyStatus" style="margin-top:0.6rem; font-family:var(--mono); font-size:0.72rem; color:var(--text-dim);"></div>
+  <div class="info-banner">
+    <div class="info-banner-icon">✓</div>
+    <div>
+      <strong style="color:var(--text);">No API key required.</strong>
+      This app uses Claude AI vision — just upload your PDF and scan.
+      Each page is rendered at high resolution and analyzed individually for thorough coverage.
     </div>
   </div>
 
-  <!-- STEP 2: UPLOAD -->
   <div class="card">
     <div class="card-header">
       <div class="card-dot"></div>
-      Step 2 — Upload Architectural Plans
+      Upload Architectural Plans
     </div>
     <div class="card-body">
-
       <div id="uploadZone" class="upload-zone" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
         <input type="file" id="pdfInput" accept=".pdf" onchange="onFileSelected(event)">
         <div class="upload-icon">📐</div>
         <div class="upload-label">Drop your architectural PDF here</div>
-        <div class="upload-sub">or click to browse — large files supported</div>
+        <div class="upload-sub">or click to browse — large multi-page files supported</div>
       </div>
-
       <div id="fileInfo" style="display:none; margin-top:1rem;">
         <div class="file-selected">
           <span class="file-icon">📄</span>
@@ -547,29 +150,23 @@
           <button class="btn btn-outline" style="margin-left:auto;" onclick="clearFile()">Remove</button>
         </div>
       </div>
-
       <div class="scan-btn-wrap">
-        <button class="btn btn-primary" id="scanBtn" onclick="startScan()" disabled>
-          ▶ &nbsp;Scan Plans
-        </button>
-        <div id="statusIndicator" style="font-family:var(--mono); font-size:0.72rem; color:var(--text-dim);">
+        <button class="btn btn-primary" id="scanBtn" onclick="startScan()" disabled>▶ &nbsp;Scan Plans</button>
+        <div style="font-family:var(--mono); font-size:0.72rem; color:var(--text-dim);">
           <span class="status-dot status-idle" id="statusDot"></span>
-          <span id="statusText">Ready</span>
+          <span id="statusText">Ready — upload a PDF to begin</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- PROGRESS -->
   <div class="card progress-section" id="progressSection">
     <div class="card-header">
       <div class="card-dot" style="background:var(--amber);"></div>
       Analysis in Progress
     </div>
     <div class="card-body">
-      <div class="progress-bar-wrap">
-        <div class="progress-bar-fill" id="progressFill"></div>
-      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill"></div></div>
       <div class="progress-meta">
         <span id="progressLabel">Initializing...</span>
         <span id="progressPct">0%</span>
@@ -578,7 +175,6 @@
     </div>
   </div>
 
-  <!-- RESULTS -->
   <div class="card results-section" id="resultsSection">
     <div class="card-header">
       <div class="card-dot" style="background:var(--green);"></div>
@@ -606,75 +202,29 @@
           <tbody id="resultsBody"></tbody>
         </table>
       </div>
-      <div class="empty-state" id="emptyState" style="display:none;">
-        No cabinetry detected. Try a different plan or check image quality.
-      </div>
+      <div class="empty-state" id="emptyState" style="display:none;">No cabinetry detected. Try a different plan or check image quality.</div>
     </div>
   </div>
 
 </main>
 
-<!-- PDF.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-  let apiKey = localStorage.getItem('gemini_api_key') || '';
   let selectedFile = null;
   let allResults = [];
   let scanning = false;
 
-  // Init
-  if (apiKey) {
-    document.getElementById('apiKey').value = apiKey;
-    setKeyStatus('✓ API key loaded from session', 'var(--green)');
-  }
-
-  function toggleKeyVisibility() {
-    const inp = document.getElementById('apiKey');
-    const btn = event.target;
-    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'Hide'; }
-    else { inp.type = 'password'; btn.textContent = 'Show'; }
-  }
-
-  function saveKey() {
-    const val = document.getElementById('apiKey').value.trim();
-    if (!val.startsWith('AIza')) {
-      setKeyStatus('⚠ Key should start with AIza — double-check it', 'var(--amber)');
-      return;
-    }
-    apiKey = val;
-    localStorage.setItem('gemini_api_key', val);
-    setKeyStatus('✓ Key saved to browser storage', 'var(--green)');
-    updateScanBtn();
-  }
-
-  function setKeyStatus(msg, color) {
-    const el = document.getElementById('keyStatus');
-    el.textContent = msg;
-    el.style.color = color;
-  }
-
-  function onDragOver(e) {
-    e.preventDefault();
-    document.getElementById('uploadZone').classList.add('drag-over');
-  }
-
-  function onDragLeave() {
-    document.getElementById('uploadZone').classList.remove('drag-over');
-  }
-
+  function onDragOver(e) { e.preventDefault(); document.getElementById('uploadZone').classList.add('drag-over'); }
+  function onDragLeave() { document.getElementById('uploadZone').classList.remove('drag-over'); }
   function onDrop(e) {
     e.preventDefault();
     document.getElementById('uploadZone').classList.remove('drag-over');
     const file = e.dataTransfer.files[0];
     if (file && file.type === 'application/pdf') loadFile(file);
   }
-
-  function onFileSelected(e) {
-    const file = e.target.files[0];
-    if (file) loadFile(file);
-  }
+  function onFileSelected(e) { if (e.target.files[0]) loadFile(e.target.files[0]); }
 
   function loadFile(file) {
     selectedFile = file;
@@ -682,7 +232,7 @@
     document.getElementById('fileInfo').style.display = 'block';
     document.getElementById('fileName').textContent = file.name;
     document.getElementById('fileSize').textContent = formatSize(file.size) + ' — PDF';
-    updateScanBtn();
+    document.getElementById('scanBtn').disabled = false;
   }
 
   function clearFile() {
@@ -690,28 +240,19 @@
     document.getElementById('uploadZone').style.display = '';
     document.getElementById('fileInfo').style.display = 'none';
     document.getElementById('pdfInput').value = '';
-    updateScanBtn();
+    document.getElementById('scanBtn').disabled = true;
   }
 
-  function formatSize(bytes) {
-    if (bytes > 1048576) return (bytes / 1048576).toFixed(1) + ' MB';
-    return (bytes / 1024).toFixed(0) + ' KB';
-  }
-
-  function updateScanBtn() {
-    document.getElementById('scanBtn').disabled = !(apiKey && selectedFile && !scanning);
-  }
+  function formatSize(b) { return b > 1048576 ? (b/1048576).toFixed(1)+' MB' : (b/1024).toFixed(0)+' KB'; }
 
   function setStatus(state, text) {
-    const dot = document.getElementById('statusDot');
-    dot.className = 'status-dot status-' + state;
+    document.getElementById('statusDot').className = 'status-dot status-' + state;
     document.getElementById('statusText').textContent = text;
   }
 
   function log(msg, type = 'info') {
     const area = document.getElementById('logArea');
-    const now = new Date();
-    const time = now.toTimeString().slice(0, 8);
+    const time = new Date().toTimeString().slice(0, 8);
     const line = document.createElement('div');
     line.className = 'log-line';
     line.innerHTML = `<span class="log-time">${time}</span><span class="log-${type}">${msg}</span>`;
@@ -726,12 +267,11 @@
   }
 
   async function startScan() {
-    if (!apiKey || !selectedFile || scanning) return;
+    if (!selectedFile || scanning) return;
     scanning = true;
     allResults = [];
-    updateScanBtn();
+    document.getElementById('scanBtn').disabled = true;
     setStatus('running', 'Scanning...');
-
     document.getElementById('progressSection').classList.add('active');
     document.getElementById('resultsSection').classList.remove('active');
     document.getElementById('logArea').innerHTML = '';
@@ -741,147 +281,130 @@
       const arrayBuffer = await selectedFile.arrayBuffer();
       const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
       const numPages = pdf.numPages;
-      log(`PDF loaded — ${numPages} page${numPages > 1 ? 's' : ''} found`, 'ok');
+      log(`PDF loaded — ${numPages} page${numPages > 1 ? 's' : ''} detected`, 'ok');
 
       for (let i = 1; i <= numPages; i++) {
-        setProgress(((i - 1) / numPages) * 100, `Analyzing page ${i} of ${numPages}...`);
-        log(`Rendering page ${i}/${numPages}...`, 'info');
+        setProgress(((i - 1) / numPages) * 90, `Analyzing page ${i} of ${numPages}...`);
+        log(`Rendering page ${i}/${numPages} at high resolution...`, 'info');
 
         const page = await pdf.getPage(i);
-        const viewport = page.getViewport({ scale: 2.0 }); // High res for clarity
+        const viewport = page.getViewport({ scale: 2.5 });
         const canvas = document.createElement('canvas');
         canvas.width = viewport.width;
         canvas.height = viewport.height;
-        const ctx = canvas.getContext('2d');
-        await page.render({ canvasContext: ctx, viewport }).promise;
+        await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+        const base64 = canvas.toDataURL('image/jpeg', 0.92).split(',')[1];
 
-        const base64 = canvas.toDataURL('image/jpeg', 0.88).split(',')[1];
-        log(`Sending page ${i} to Gemini Vision...`, 'info');
+        log(`Sending page ${i} to Claude Vision...`, 'info');
+        const pageResults = await analyzeWithClaude(base64, i, numPages);
 
-        const pageResults = await analyzePageWithGemini(base64, i);
         if (pageResults.length > 0) {
           allResults.push(...pageResults);
-          log(`Page ${i}: found ${pageResults.length} cabinet group${pageResults.length > 1 ? 's' : ''}`, 'ok');
+          log(`Page ${i}: found ${pageResults.length} cabinet group${pageResults.length !== 1 ? 's' : ''}`, 'ok');
+          pageResults.forEach(r => log(`  → ${r.room} | ${r.cabinet_type} | ${r.location || '—'}`, 'ok'));
         } else {
-          log(`Page ${i}: no cabinetry detected`, 'warn');
+          log(`Page ${i}: no cabinetry identified`, 'warn');
         }
 
-        // Small delay to be kind to the API
-        if (i < numPages) await sleep(300);
+        if (i < numPages) await sleep(400);
       }
 
       setProgress(100, 'Analysis complete');
-      log(`Done — ${allResults.length} total cabinet groups found`, 'ok');
+      log('─────────────────────────────────────', 'info');
+      log(`Scan complete — ${allResults.length} total cabinet groups found`, 'ok');
       setStatus('done', 'Complete');
-
-      // Deduplicate and render
-      const deduped = deduplicateResults(allResults);
-      renderResults(deduped);
+      renderResults(deduplicateResults(allResults));
 
     } catch (err) {
       log(`Error: ${err.message}`, 'err');
-      setStatus('error', 'Error — check log');
+      setStatus('error', 'Error — see log above');
       console.error(err);
     }
 
     scanning = false;
-    updateScanBtn();
+    document.getElementById('scanBtn').disabled = false;
   }
 
-  async function analyzePageWithGemini(base64Image, pageNum) {
-    const prompt = `You are analyzing an architectural floor plan drawing (page ${pageNum}).
+  async function analyzeWithClaude(base64Image, pageNum, totalPages) {
+    const prompt = `You are an expert architectural plan reader working for a cabinetry company called Ferris Cabinetry.
 
-Identify ALL rooms or spaces that contain or would contain cabinetry: kitchens, bathrooms, laundry rooms, pantries, mudrooms, utility rooms, office built-ins, closet systems, bars, etc.
+This is page ${pageNum} of ${totalPages} of a residential architectural floor plan. Your job is to identify EVERY room or space that contains cabinetry — do not miss anything.
 
-For each distinct cabinet group or run, return a JSON array. Each object must have:
-- "room": the room name (e.g., "Kitchen", "Master Bath", "Laundry Room", "Pantry")
-- "cabinet_type": one of exactly these values: "Base Cabinet", "Upper Cabinet", "Tall Cabinet", "Island", "Vanity", "Linen Cabinet", "Pantry Cabinet", "Built-in", "Other"
-- "qty": estimated number of individual cabinet units as an integer (use null if truly unclear)
-- "dimensions": approximate dimensions as a string (e.g., "24\\"D x 34.5\\"H" or "12\\"D x 30\\"H" or "varies" if mixed)
-- "location": wall or position within the room (e.g., "North wall", "South wall", "Center island", "Between windows", "Below cooktop")
+Rooms that commonly have cabinetry:
+- Kitchen (base cabinets, upper cabinets, islands, pantry towers)
+- Bathrooms / Master Bath / Powder Room (vanities, linen cabinets, medicine cabinets)
+- Laundry Room (base and upper cabinets)
+- Mudroom / Entry (built-in lockers, bench storage)
+- Home Office (built-in desk, bookshelves)
+- Bar / Wet Bar
+- Pantry
+- Utility rooms
+- Closets with built-in systems
+
+For EVERY distinct cabinet run or group, return a JSON object with:
+- "room": room name exactly as labeled on the plan
+- "cabinet_type": one of exactly: "Base Cabinet", "Upper Cabinet", "Tall Cabinet", "Island", "Vanity", "Linen Cabinet", "Pantry Cabinet", "Medicine Cabinet", "Built-in", "Other"
+- "qty": estimated count of individual units as integer (null if unclear)
+- "dimensions": e.g. "24\\"D x 34.5\\"H" — use standard depths: base=24", upper=12", tall=24"
+- "location": where in the room (e.g. "North wall", "South wall", "Center island", "East wall below window")
 
 Important rules:
-- Base cabinets are lower floor-mounted units (typically 34-36" tall)
-- Upper cabinets are wall-mounted above counter (typically 12-15" deep)  
-- Tall cabinets are floor-to-ceiling units like pantries, ovens, ref surrounds
-- Islands are freestanding center units
-- If a room appears across multiple plan views, still report it
-- Be conservative: only report what you can actually see in the drawing
+- Scan the ENTIRE image before responding — every corner, every room label
+- If a room has cabinet runs on multiple walls, list each wall as a separate entry
+- Be thorough: it is better to report too much than to miss cabinetry
+- Return ONLY a valid JSON array, no markdown, no explanation
+- If this page has no cabinetry (cover sheet, site plan, etc.), return []`;
 
-Return ONLY valid JSON array. No markdown formatting, no code blocks, no explanation. If no cabinetry visible, return [].`;
-
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [
-              {
-                inlineData: {
-                  mimeType: 'image/jpeg',
-                  data: base64Image
-                }
-              },
-              { text: prompt }
-            ]
-          }],
-          generationConfig: {
-            temperature: 0.1,
-            maxOutputTokens: 2048
-          }
-        })
-      }
-    );
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 2000,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: base64Image } },
+            { type: 'text', text: prompt }
+          ]
+        }]
+      })
+    });
 
     if (!response.ok) {
-      const err = await response.json();
-      const msg = err.error?.message || response.statusText;
-      throw new Error(`Gemini API error: ${msg}`);
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error?.message || `API error ${response.status}`);
     }
 
     const data = await response.json();
-    const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
-
-    // Clean and parse
-    const cleaned = rawText
-      .replace(/```json/gi, '')
-      .replace(/```/g, '')
-      .trim();
+    const rawText = data.content?.[0]?.text || '[]';
 
     try {
+      const cleaned = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
       const parsed = JSON.parse(cleaned);
       return Array.isArray(parsed) ? parsed : [];
     } catch {
-      console.warn('Could not parse Gemini response:', rawText);
+      console.warn('Parse error:', rawText);
       return [];
     }
   }
 
   function deduplicateResults(results) {
-    // Merge entries with identical room + cabinet_type + location
     const map = new Map();
     for (const r of results) {
-      const key = `${normalize(r.room)}|${normalize(r.cabinet_type)}|${normalize(r.location)}`;
-      if (!map.has(key)) {
-        map.set(key, { ...r });
-      } else {
-        const existing = map.get(key);
-        if (r.qty && existing.qty) existing.qty = Math.max(existing.qty, r.qty);
-      }
+      const key = `${norm(r.room)}|${norm(r.cabinet_type)}|${norm(r.location)}`;
+      if (!map.has(key)) map.set(key, { ...r });
+      else { const ex = map.get(key); if (r.qty && ex.qty) ex.qty = Math.max(ex.qty, r.qty); }
     }
     return Array.from(map.values());
   }
 
-  function normalize(s) {
-    return (s || '').toLowerCase().replace(/\s+/g, ' ').trim();
-  }
+  function norm(s) { return (s || '').toLowerCase().replace(/\s+/g, ' ').trim(); }
 
   function badgeClass(type) {
     const t = (type || '').toLowerCase();
     if (t.includes('base')) return 'badge-base';
-    if (t.includes('upper')) return 'badge-upper';
+    if (t.includes('upper') || t.includes('medicine')) return 'badge-upper';
     if (t.includes('tall') || t.includes('pantry') || t.includes('linen')) return 'badge-tall';
     if (t.includes('island')) return 'badge-island';
     return 'badge-other';
@@ -890,70 +413,40 @@ Return ONLY valid JSON array. No markdown formatting, no code blocks, no explana
   function renderResults(results) {
     const section = document.getElementById('resultsSection');
     const tbody = document.getElementById('resultsBody');
-    const empty = document.getElementById('emptyState');
-    const count = document.getElementById('resultCount');
-
     section.classList.add('active');
     tbody.innerHTML = '';
-    count.textContent = results.length;
+    document.getElementById('resultCount').textContent = results.length;
 
-    if (results.length === 0) {
-      empty.style.display = 'block';
-      tbody.parentElement.style.display = 'none';
-      return;
-    }
-
-    empty.style.display = 'none';
-    tbody.parentElement.style.display = '';
-
-    // Sort by room name
+    if (!results.length) { document.getElementById('emptyState').style.display = 'block'; return; }
+    document.getElementById('emptyState').style.display = 'none';
     results.sort((a, b) => (a.room || '').localeCompare(b.room || ''));
 
     for (const r of results) {
       const tr = document.createElement('tr');
-      const bClass = badgeClass(r.cabinet_type);
-      const qty = r.qty != null ? `<span class="qty-pill">${r.qty}</span>` : '<span class="qty-pill" style="color:var(--text-dim)">—</span>';
+      const qty = r.qty != null ? `<span class="qty-pill">${r.qty}</span>` : `<span class="qty-pill" style="color:var(--text-dim)">—</span>`;
       tr.innerHTML = `
         <td>${r.room || '—'}</td>
-        <td><span class="badge ${bClass}">${r.cabinet_type || 'Other'}</span></td>
+        <td><span class="badge ${badgeClass(r.cabinet_type)}">${r.cabinet_type || 'Other'}</span></td>
         <td>${qty}</td>
         <td><span class="dim-text">${r.dimensions || '—'}</span></td>
-        <td>${r.location || '—'}</td>
-      `;
+        <td>${r.location || '—'}</td>`;
       tbody.appendChild(tr);
     }
   }
 
   function exportCSV() {
     if (!allResults.length) return;
-    const deduped = deduplicateResults(allResults);
-    deduped.sort((a, b) => (a.room || '').localeCompare(b.room || ''));
-
-    const headers = ['Room / Space', 'Cabinet Type', 'Qty', 'Approx. Dimensions', 'Location / Wall'];
-    const rows = deduped.map(r => [
-      csvEsc(r.room),
-      csvEsc(r.cabinet_type),
-      r.qty != null ? r.qty : '',
-      csvEsc(r.dimensions),
-      csvEsc(r.location)
-    ]);
-
-    const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
+    const rows = deduplicateResults(allResults);
+    rows.sort((a, b) => (a.room || '').localeCompare(b.room || ''));
+    const headers = ['Room / Space','Cabinet Type','Qty','Approx. Dimensions','Location / Wall'];
+    const csv = [headers, ...rows.map(r => [esc(r.room), esc(r.cabinet_type), r.qty ?? '', esc(r.dimensions), esc(r.location)])].map(r => r.join(',')).join('\n');
     const a = document.createElement('a');
-    a.href = url;
-    const planName = selectedFile?.name?.replace('.pdf', '') || 'plan';
-    a.download = `${planName}-cabinetry-schedule.csv`;
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+    a.download = `${(selectedFile?.name || 'plan').replace('.pdf','')}-cabinetry-schedule.csv`;
     a.click();
-    URL.revokeObjectURL(url);
   }
 
-  function csvEsc(val) {
-    const s = (val || '').toString().replace(/"/g, '""');
-    return s.includes(',') || s.includes('"') || s.includes('\n') ? `"${s}"` : s;
-  }
-
+  function esc(v) { const s = (v||'').toString().replace(/"/g,'""'); return /[,"\n]/.test(s) ? `"${s}"` : s; }
   function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 </script>
 </body>

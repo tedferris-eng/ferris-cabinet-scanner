@@ -7,20 +7,10 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0b1520;
-    --surface: #111d2e;
-    --surface2: #162436;
-    --border: #1e3a5f;
-    --blue: #2e86de;
-    --blue-light: #54a0ff;
-    --amber: #f9a825;
-    --green: #26de81;
-    --red: #ff4757;
-    --text: #d0e4f7;
-    --text-dim: #6b8cae;
-    --text-bright: #eaf4ff;
-    --mono: 'IBM Plex Mono', monospace;
-    --sans: 'IBM Plex Sans', sans-serif;
+    --bg: #0b1520; --surface: #111d2e; --surface2: #162436; --border: #1e3a5f;
+    --blue: #2e86de; --blue-light: #54a0ff; --amber: #f9a825; --green: #26de81;
+    --red: #ff4757; --text: #d0e4f7; --text-dim: #6b8cae; --text-bright: #eaf4ff;
+    --mono: 'IBM Plex Mono', monospace; --sans: 'IBM Plex Sans', sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -39,8 +29,7 @@
   .card-header { background: var(--surface2); border-bottom: 1px solid var(--border); padding: 0.75rem 1.25rem; display: flex; align-items: center; gap: 0.6rem; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); }
   .card-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
   .card-body { padding: 1.5rem; }
-  .info-banner { background: rgba(38,222,129,0.06); border: 1px solid rgba(38,222,129,0.2); border-radius: 2px; padding: 1rem 1.25rem; font-size: 0.83rem; color: var(--text-dim); line-height: 1.6; display: flex; gap: 1rem; align-items: flex-start; }
-  .info-banner-icon { font-size: 1.3rem; flex-shrink: 0; }
+  .info-banner { background: rgba(38,222,129,0.06); border: 1px solid rgba(38,222,129,0.2); border-radius: 2px; padding: 1rem 1.25rem; font-size: 0.83rem; color: var(--text-dim); line-height: 1.7; display: flex; gap: 1rem; align-items: flex-start; }
   .upload-zone { border: 1.5px dashed var(--border); border-radius: 2px; padding: 2.5rem; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; }
   .upload-zone:hover, .upload-zone.drag-over { border-color: var(--blue); background: rgba(46,134,222,0.05); }
   .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
@@ -71,7 +60,7 @@
   .progress-bar-wrap { background: var(--bg); border: 1px solid var(--border); border-radius: 2px; height: 6px; overflow: hidden; margin: 1rem 0 0.6rem; }
   .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--blue-light)); transition: width 0.4s ease; width: 0%; }
   .progress-meta { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim); }
-  .log-area { margin-top: 1rem; background: var(--bg); border: 1px solid var(--border); border-radius: 2px; padding: 0.75rem 1rem; height: 160px; overflow-y: auto; font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim); display: flex; flex-direction: column; gap: 0.25rem; }
+  .log-area { margin-top: 1rem; background: var(--bg); border: 1px solid var(--border); border-radius: 2px; padding: 0.75rem 1rem; height: 160px; overflow-y: auto; font-family: var(--mono); font-size: 0.72rem; display: flex; flex-direction: column; gap: 0.25rem; }
   .log-line { display: flex; gap: 0.6rem; }
   .log-time { color: var(--border); }
   .log-ok { color: var(--green); }
@@ -120,19 +109,15 @@
 <main>
 
   <div class="info-banner">
-    <div class="info-banner-icon">✓</div>
+    <div style="font-size:1.3rem; flex-shrink:0;">✓</div>
     <div>
-      <strong style="color:var(--text);">No API key required.</strong>
-      This app uses Claude AI vision — just upload your PDF and scan.
-      Each page is rendered at high resolution and analyzed individually for thorough coverage.
+      <strong style="color:var(--text);">No API key entry required.</strong>
+      Upload your architectural PDF and hit Scan — Claude AI analyzes every page at high resolution, room by room.
     </div>
   </div>
 
   <div class="card">
-    <div class="card-header">
-      <div class="card-dot"></div>
-      Upload Architectural Plans
-    </div>
+    <div class="card-header"><div class="card-dot"></div>Upload Architectural Plans</div>
     <div class="card-body">
       <div id="uploadZone" class="upload-zone" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
         <input type="file" id="pdfInput" accept=".pdf" onchange="onFileSelected(event)">
@@ -161,25 +146,16 @@
   </div>
 
   <div class="card progress-section" id="progressSection">
-    <div class="card-header">
-      <div class="card-dot" style="background:var(--amber);"></div>
-      Analysis in Progress
-    </div>
+    <div class="card-header"><div class="card-dot" style="background:var(--amber);"></div>Analysis in Progress</div>
     <div class="card-body">
       <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill"></div></div>
-      <div class="progress-meta">
-        <span id="progressLabel">Initializing...</span>
-        <span id="progressPct">0%</span>
-      </div>
+      <div class="progress-meta"><span id="progressLabel">Initializing...</span><span id="progressPct">0%</span></div>
       <div class="log-area" id="logArea"></div>
     </div>
   </div>
 
   <div class="card results-section" id="resultsSection">
-    <div class="card-header">
-      <div class="card-dot" style="background:var(--green);"></div>
-      Cabinetry Schedule
-    </div>
+    <div class="card-header"><div class="card-dot" style="background:var(--green);"></div>Cabinetry Schedule</div>
     <div class="card-body">
       <div class="results-header">
         <div class="results-count">Found <span id="resultCount">0</span> cabinet groups</div>
@@ -190,15 +166,9 @@
       </div>
       <div class="table-wrap">
         <table>
-          <thead>
-            <tr>
-              <th>Room / Space</th>
-              <th>Cabinet Type</th>
-              <th>Qty</th>
-              <th>Approx. Dimensions</th>
-              <th>Location / Wall</th>
-            </tr>
-          </thead>
+          <thead><tr>
+            <th>Room / Space</th><th>Cabinet Type</th><th>Qty</th><th>Approx. Dimensions</th><th>Location / Wall</th>
+          </tr></thead>
           <tbody id="resultsBody"></tbody>
         </table>
       </div>
@@ -212,17 +182,14 @@
 <script>
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-  let selectedFile = null;
-  let allResults = [];
-  let scanning = false;
+  let selectedFile = null, allResults = [], scanning = false;
 
   function onDragOver(e) { e.preventDefault(); document.getElementById('uploadZone').classList.add('drag-over'); }
   function onDragLeave() { document.getElementById('uploadZone').classList.remove('drag-over'); }
   function onDrop(e) {
-    e.preventDefault();
-    document.getElementById('uploadZone').classList.remove('drag-over');
-    const file = e.dataTransfer.files[0];
-    if (file && file.type === 'application/pdf') loadFile(file);
+    e.preventDefault(); document.getElementById('uploadZone').classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f && f.type === 'application/pdf') loadFile(f);
   }
   function onFileSelected(e) { if (e.target.files[0]) loadFile(e.target.files[0]); }
 
@@ -252,7 +219,7 @@
 
   function log(msg, type = 'info') {
     const area = document.getElementById('logArea');
-    const time = new Date().toTimeString().slice(0, 8);
+    const time = new Date().toTimeString().slice(0,8);
     const line = document.createElement('div');
     line.className = 'log-line';
     line.innerHTML = `<span class="log-time">${time}</span><span class="log-${type}">${msg}</span>`;
@@ -268,8 +235,7 @@
 
   async function startScan() {
     if (!selectedFile || scanning) return;
-    scanning = true;
-    allResults = [];
+    scanning = true; allResults = [];
     document.getElementById('scanBtn').disabled = true;
     setStatus('running', 'Scanning...');
     document.getElementById('progressSection').classList.add('active');
@@ -284,7 +250,7 @@
       log(`PDF loaded — ${numPages} page${numPages > 1 ? 's' : ''} detected`, 'ok');
 
       for (let i = 1; i <= numPages; i++) {
-        setProgress(((i - 1) / numPages) * 90, `Analyzing page ${i} of ${numPages}...`);
+        setProgress(((i-1)/numPages)*90, `Analyzing page ${i} of ${numPages}...`);
         log(`Rendering page ${i}/${numPages} at high resolution...`, 'info');
 
         const page = await pdf.getPage(i);
@@ -318,7 +284,6 @@
     } catch (err) {
       log(`Error: ${err.message}`, 'err');
       setStatus('error', 'Error — see log above');
-      console.error(err);
     }
 
     scanning = false;
@@ -326,41 +291,30 @@
   }
 
   async function analyzeWithClaude(base64Image, pageNum, totalPages) {
-    const prompt = `You are an expert architectural plan reader working for a cabinetry company called Ferris Cabinetry.
+    const prompt = `You are an expert architectural plan reader for Ferris Cabinetry.
 
-This is page ${pageNum} of ${totalPages} of a residential architectural floor plan. Your job is to identify EVERY room or space that contains cabinetry — do not miss anything.
+This is page ${pageNum} of ${totalPages} of a residential architectural floor plan.
+Identify EVERY room or space with cabinetry. Do not miss any room.
 
-Rooms that commonly have cabinetry:
-- Kitchen (base cabinets, upper cabinets, islands, pantry towers)
-- Bathrooms / Master Bath / Powder Room (vanities, linen cabinets, medicine cabinets)
-- Laundry Room (base and upper cabinets)
-- Mudroom / Entry (built-in lockers, bench storage)
-- Home Office (built-in desk, bookshelves)
-- Bar / Wet Bar
-- Pantry
-- Utility rooms
-- Closets with built-in systems
+Common rooms: Kitchen, Bathrooms, Laundry, Mudroom, Office, Bar, Pantry, Utility, Closets.
 
-For EVERY distinct cabinet run or group, return a JSON object with:
-- "room": room name exactly as labeled on the plan
-- "cabinet_type": one of exactly: "Base Cabinet", "Upper Cabinet", "Tall Cabinet", "Island", "Vanity", "Linen Cabinet", "Pantry Cabinet", "Medicine Cabinet", "Built-in", "Other"
-- "qty": estimated count of individual units as integer (null if unclear)
-- "dimensions": e.g. "24\\"D x 34.5\\"H" — use standard depths: base=24", upper=12", tall=24"
-- "location": where in the room (e.g. "North wall", "South wall", "Center island", "East wall below window")
+For each distinct cabinet run return a JSON object:
+- "room": room name as labeled on the plan
+- "cabinet_type": one of: "Base Cabinet", "Upper Cabinet", "Tall Cabinet", "Island", "Vanity", "Linen Cabinet", "Pantry Cabinet", "Medicine Cabinet", "Built-in", "Other"
+- "qty": integer count of units (null if unclear)
+- "dimensions": e.g. "24\\"D x 34.5\\"H" (base=24"D, upper=12"D, tall=24"D)
+- "location": wall or position e.g. "North wall", "South wall", "Center island"
 
-Important rules:
-- Scan the ENTIRE image before responding — every corner, every room label
-- If a room has cabinet runs on multiple walls, list each wall as a separate entry
-- Be thorough: it is better to report too much than to miss cabinetry
+Rules:
+- Scan the ENTIRE image — every room, every corner
+- List each wall of a room separately if cabinets run on multiple walls
 - Return ONLY a valid JSON array, no markdown, no explanation
-- If this page has no cabinetry (cover sheet, site plan, etc.), return []`;
+- Return [] if no cabinetry visible`;
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 2000,
         messages: [{
           role: 'user',
           content: [
@@ -380,13 +334,10 @@ Important rules:
     const rawText = data.content?.[0]?.text || '[]';
 
     try {
-      const cleaned = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+      const cleaned = rawText.replace(/```json/gi,'').replace(/```/g,'').trim();
       const parsed = JSON.parse(cleaned);
       return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      console.warn('Parse error:', rawText);
-      return [];
-    }
+    } catch { return []; }
   }
 
   function deduplicateResults(results) {
@@ -399,37 +350,29 @@ Important rules:
     return Array.from(map.values());
   }
 
-  function norm(s) { return (s || '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+  function norm(s) { return (s||'').toLowerCase().replace(/\s+/g,' ').trim(); }
 
   function badgeClass(type) {
-    const t = (type || '').toLowerCase();
+    const t = (type||'').toLowerCase();
     if (t.includes('base')) return 'badge-base';
-    if (t.includes('upper') || t.includes('medicine')) return 'badge-upper';
-    if (t.includes('tall') || t.includes('pantry') || t.includes('linen')) return 'badge-tall';
+    if (t.includes('upper')||t.includes('medicine')) return 'badge-upper';
+    if (t.includes('tall')||t.includes('pantry')||t.includes('linen')) return 'badge-tall';
     if (t.includes('island')) return 'badge-island';
     return 'badge-other';
   }
 
   function renderResults(results) {
-    const section = document.getElementById('resultsSection');
+    document.getElementById('resultsSection').classList.add('active');
     const tbody = document.getElementById('resultsBody');
-    section.classList.add('active');
     tbody.innerHTML = '';
     document.getElementById('resultCount').textContent = results.length;
-
     if (!results.length) { document.getElementById('emptyState').style.display = 'block'; return; }
     document.getElementById('emptyState').style.display = 'none';
-    results.sort((a, b) => (a.room || '').localeCompare(b.room || ''));
-
+    results.sort((a,b) => (a.room||'').localeCompare(b.room||''));
     for (const r of results) {
       const tr = document.createElement('tr');
       const qty = r.qty != null ? `<span class="qty-pill">${r.qty}</span>` : `<span class="qty-pill" style="color:var(--text-dim)">—</span>`;
-      tr.innerHTML = `
-        <td>${r.room || '—'}</td>
-        <td><span class="badge ${badgeClass(r.cabinet_type)}">${r.cabinet_type || 'Other'}</span></td>
-        <td>${qty}</td>
-        <td><span class="dim-text">${r.dimensions || '—'}</span></td>
-        <td>${r.location || '—'}</td>`;
+      tr.innerHTML = `<td>${r.room||'—'}</td><td><span class="badge ${badgeClass(r.cabinet_type)}">${r.cabinet_type||'Other'}</span></td><td>${qty}</td><td><span class="dim-text">${r.dimensions||'—'}</span></td><td>${r.location||'—'}</td>`;
       tbody.appendChild(tr);
     }
   }
@@ -437,16 +380,16 @@ Important rules:
   function exportCSV() {
     if (!allResults.length) return;
     const rows = deduplicateResults(allResults);
-    rows.sort((a, b) => (a.room || '').localeCompare(b.room || ''));
+    rows.sort((a,b) => (a.room||'').localeCompare(b.room||''));
     const headers = ['Room / Space','Cabinet Type','Qty','Approx. Dimensions','Location / Wall'];
-    const csv = [headers, ...rows.map(r => [esc(r.room), esc(r.cabinet_type), r.qty ?? '', esc(r.dimensions), esc(r.location)])].map(r => r.join(',')).join('\n');
+    const csv = [headers, ...rows.map(r => [esc(r.room), esc(r.cabinet_type), r.qty??'', esc(r.dimensions), esc(r.location)])].map(r => r.join(',')).join('\n');
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-    a.download = `${(selectedFile?.name || 'plan').replace('.pdf','')}-cabinetry-schedule.csv`;
+    a.download = `${(selectedFile?.name||'plan').replace('.pdf','')}-cabinetry-schedule.csv`;
     a.click();
   }
 
-  function esc(v) { const s = (v||'').toString().replace(/"/g,'""'); return /[,"\n]/.test(s) ? `"${s}"` : s; }
+  function esc(v) { const s=(v||'').toString().replace(/"/g,'""'); return /[,"\n]/.test(s) ? `"${s}"` : s; }
   function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 </script>
 </body>

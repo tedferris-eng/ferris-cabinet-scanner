@@ -48,7 +48,9 @@
   .btn-outline:hover { border-color: var(--blue); color: var(--blue-light); }
   .btn-green { background: transparent; border-color: var(--green); color: var(--green); }
   .btn-green:hover { background: rgba(38,222,129,0.1); }
-  .scan-btn-wrap { display: flex; gap: 0.75rem; align-items: center; margin-top: 1.5rem; }
+  .btn-amber { background: transparent; border-color: var(--amber); color: var(--amber); }
+  .btn-amber:hover { background: rgba(249,168,37,0.1); }
+  .scan-btn-wrap { display: flex; gap: 0.75rem; align-items: center; margin-top: 1.5rem; flex-wrap: wrap; }
   .status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 0.4rem; }
   .status-idle { background: var(--text-dim); }
   .status-running { background: var(--amber); animation: pulse 1s infinite; }
@@ -69,7 +71,7 @@
   .log-err { color: var(--red); }
   .results-section { display: none; }
   .results-section.active { display: block; }
-  .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+  .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem; }
   .results-count { font-family: var(--mono); font-size: 0.75rem; color: var(--text-dim); }
   .results-count span { color: var(--green); font-size: 0.9rem; }
   .table-wrap { overflow-x: auto; }
@@ -80,15 +82,12 @@
   tbody tr:hover { background: rgba(46,134,222,0.04); }
   td { padding: 0.7rem 1rem; color: var(--text); vertical-align: top; }
   td:first-child { font-weight: 500; color: var(--text-bright); }
-  .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 2px; font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.06em; font-weight: 600; }
-  .badge-base   { background: rgba(46,134,222,0.15); color: var(--blue-light); border: 1px solid rgba(46,134,222,0.3); }
-  .badge-upper  { background: rgba(249,168,37,0.12); color: var(--amber); border: 1px solid rgba(249,168,37,0.25); }
-  .badge-tall   { background: rgba(38,222,129,0.1); color: var(--green); border: 1px solid rgba(38,222,129,0.2); }
-  .badge-island { background: rgba(255,71,87,0.1); color: #ff6b81; border: 1px solid rgba(255,71,87,0.2); }
-  .badge-other  { background: rgba(107,140,174,0.1); color: var(--text-dim); border: 1px solid var(--border); }
-  .qty-pill { display: inline-block; background: var(--bg); border: 1px solid var(--border); border-radius: 2px; padding: 0.1rem 0.45rem; font-family: var(--mono); font-size: 0.75rem; min-width: 2rem; text-align: center; }
+  .qty-pill { display: inline-block; background: var(--bg); border: 1px solid var(--border); border-radius: 2px; padding: 0.1rem 0.45rem; font-family: var(--mono); font-size: 0.75rem; min-width: 2.5rem; text-align: center; }
   .dim-text { font-family: var(--mono); font-size: 0.75rem; color: var(--text-dim); }
   .empty-state { text-align: center; padding: 3rem; color: var(--text-dim); font-size: 0.85rem; }
+  .legend { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem; font-family: var(--mono); font-size: 0.68rem; }
+  .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+  .legend-swatch { width: 12px; height: 12px; border-radius: 2px; }
 </style>
 </head>
 <body>
@@ -109,10 +108,10 @@
 <main>
 
   <div class="info-banner">
-    <div style="font-size:1.3rem; flex-shrink:0;">✓</div>
+    <div style="font-size:1.3rem;flex-shrink:0;">✓</div>
     <div>
-      <strong style="color:var(--text);">No API key needed in this app.</strong>
-      The Claude AI key is configured securely on the server by your admin — just upload your PDF and hit Scan. Each page is rendered at high resolution and analyzed room by room.
+      <strong style="color:var(--text);">No API key entry required.</strong>
+      Upload your architectural PDF and hit Scan — Claude analyzes every page, estimates lineal footage per wall, and generates a <strong style="color:var(--text);">marked-up PDF</strong> with color-coded cabinet overlays.
     </div>
   </div>
 
@@ -158,12 +157,20 @@
     <div class="card-header"><div class="card-dot" style="background:var(--green);"></div>Cabinetry Schedule</div>
     <div class="card-body">
       <div class="results-header">
-        <div class="results-count">Found <span id="resultCount">0</span> cabinet groups</div>
-        <div style="display:flex; gap:0.5rem;">
+        <div class="results-count">Found <span id="resultCount">0</span> cabinet runs</div>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
           <button class="btn btn-outline" onclick="startScan()">Re-scan</button>
+          <button class="btn btn-amber" onclick="generatePDF()" id="pdfBtn">⬡ Download Marked-Up PDF</button>
           <button class="btn btn-green" onclick="exportCSV()">↓ Export CSV</button>
         </div>
       </div>
+
+      <div class="legend">
+        <div class="legend-item"><div class="legend-swatch" style="background:rgba(46,134,222,0.6);border:2px solid #2e86de;"></div><span style="color:var(--blue-light)">Base Cabinets</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:rgba(249,168,37,0.6);border:2px solid #f9a825;"></div><span style="color:var(--amber)">Upper Cabinets</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:rgba(38,222,129,0.6);border:2px solid #26de81;"></div><span style="color:var(--green)">Tall Cabinets</span></div>
+      </div>
+
       <div class="table-wrap">
         <table>
           <thead><tr>
@@ -178,11 +185,18 @@
 
 </main>
 
+<!-- PDF.js + jsPDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-  let selectedFile = null, allResults = [], scanning = false;
+  let selectedFile = null;
+  let allResults = [];   // raw per-page results with bbox info
+  let pageCanvases = []; // rendered canvases, one per page
+  let scanning = false;
+
+  // ─── FILE HANDLING ───────────────────────────────────────────────────────────
 
   function onDragOver(e) { e.preventDefault(); document.getElementById('uploadZone').classList.add('drag-over'); }
   function onDragLeave() { document.getElementById('uploadZone').classList.remove('drag-over'); }
@@ -203,14 +217,18 @@
   }
 
   function clearFile() {
-    selectedFile = null;
+    selectedFile = null; allResults = []; pageCanvases = [];
     document.getElementById('uploadZone').style.display = '';
     document.getElementById('fileInfo').style.display = 'none';
     document.getElementById('pdfInput').value = '';
     document.getElementById('scanBtn').disabled = true;
+    document.getElementById('resultsSection').classList.remove('active');
+    document.getElementById('progressSection').classList.remove('active');
   }
 
   function formatSize(b) { return b > 1048576 ? (b/1048576).toFixed(1)+' MB' : (b/1024).toFixed(0)+' KB'; }
+
+  // ─── STATUS / LOG ─────────────────────────────────────────────────────────────
 
   function setStatus(state, text) {
     document.getElementById('statusDot').className = 'status-dot status-' + state;
@@ -233,9 +251,11 @@
     document.getElementById('progressLabel').textContent = label;
   }
 
+  // ─── MAIN SCAN ────────────────────────────────────────────────────────────────
+
   async function startScan() {
     if (!selectedFile || scanning) return;
-    scanning = true; allResults = [];
+    scanning = true; allResults = []; pageCanvases = [];
     document.getElementById('scanBtn').disabled = true;
     setStatus('running', 'Scanning...');
     document.getElementById('progressSection').classList.add('active');
@@ -250,8 +270,8 @@
       log(`PDF loaded — ${numPages} page${numPages > 1 ? 's' : ''} detected`, 'ok');
 
       for (let i = 1; i <= numPages; i++) {
-        setProgress(((i-1)/numPages)*90, `Analyzing page ${i} of ${numPages}...`);
-        log(`Rendering page ${i}/${numPages} at high resolution...`, 'info');
+        setProgress(((i-1)/numPages)*88, `Analyzing page ${i} of ${numPages}...`);
+        log(`Rendering page ${i}/${numPages}...`, 'info');
 
         const page = await pdf.getPage(i);
         const viewport = page.getViewport({ scale: 2.5 });
@@ -259,64 +279,89 @@
         canvas.width = viewport.width;
         canvas.height = viewport.height;
         await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-        const base64 = canvas.toDataURL('image/jpeg', 0.92).split(',')[1];
+        pageCanvases.push(canvas); // save for PDF markup later
 
+        const base64 = canvas.toDataURL('image/jpeg', 0.92).split(',')[1];
         log(`Sending page ${i} to Claude Vision...`, 'info');
-        const pageResults = await analyzeWithClaude(base64, i, numPages);
+
+        const pageResults = await callClaudeWithRetry(base64, i, numPages);
+        // tag each result with its page number
+        pageResults.forEach(r => { r._page = i; });
 
         if (pageResults.length > 0) {
           allResults.push(...pageResults);
-          log(`Page ${i}: found ${pageResults.length} cabinet group${pageResults.length !== 1 ? 's' : ''}`, 'ok');
-          pageResults.forEach(r => log(`  → ${r.room} | ${r.location||'—'} | Base:${r.base_lf||0}LF Upper:${r.upper_lf||0}LF Tall:${r.tall_lf||0}LF`, 'ok'));
+          log(`Page ${i}: found ${pageResults.length} cabinet run${pageResults.length !== 1 ? 's' : ''}`, 'ok');
+          pageResults.forEach(r => log(`  → ${r.room} | ${r.location||'—'} | Base:${r.base_lf||0} Upper:${r.upper_lf||0} Tall:${r.tall_lf||0} LF`, 'ok'));
         } else {
           log(`Page ${i}: no cabinetry identified`, 'warn');
         }
 
-        if (i < numPages) await sleep(400);
+        // Polite delay between pages — avoids rate limits
+        if (i < numPages) {
+          log(`Waiting 13s before next page (rate limit)...`, 'warn');
+          await sleep(13000);
+        }
       }
 
       setProgress(100, 'Analysis complete');
       log('─────────────────────────────────────', 'info');
-      log(`Scan complete — ${allResults.length} total cabinet groups found`, 'ok');
+      log(`Scan complete — ${allResults.length} total cabinet runs found`, 'ok');
       setStatus('done', 'Complete');
       renderResults(deduplicateResults(allResults));
 
     } catch (err) {
       log(`Error: ${err.message}`, 'err');
       setStatus('error', 'Error — see log above');
+      console.error(err);
     }
 
     scanning = false;
     document.getElementById('scanBtn').disabled = false;
   }
 
+  // ─── CLAUDE API WITH RETRY ────────────────────────────────────────────────────
+
+  async function callClaudeWithRetry(base64Image, pageNum, totalPages, attempt = 1) {
+    try {
+      return await analyzeWithClaude(base64Image, pageNum, totalPages);
+    } catch (err) {
+      const isRateLimit = err.message.includes('429') || err.message.toLowerCase().includes('rate');
+      if (isRateLimit && attempt <= 3) {
+        const wait = attempt * 20; // 20s, 40s, 60s
+        log(`Rate limit hit — waiting ${wait}s then retrying (attempt ${attempt}/3)...`, 'warn');
+        await sleep(wait * 1000);
+        return callClaudeWithRetry(base64Image, pageNum, totalPages, attempt + 1);
+      }
+      throw err;
+    }
+  }
+
   async function analyzeWithClaude(base64Image, pageNum, totalPages) {
-    const prompt = `You are an expert architectural plan reader for Ferris Cabinetry, a cabinetry company that needs lineal footage estimates from floor plans.
+    const prompt = `You are an expert architectural plan reader for Ferris Cabinetry.
 
 This is page ${pageNum} of ${totalPages} of a residential architectural floor plan.
 
-Your job: identify EVERY wall run of cabinetry in EVERY room. For each wall or location with cabinets, estimate the lineal footage of base cabinets, upper (wall) cabinets, and tall cabinets separately by measuring against the plan's scale or room dimensions shown.
+TASK: Identify every wall run of cabinetry in every room, estimate lineal footage, and return the approximate location of each run as a bounding box so it can be highlighted on the plan.
 
-Common rooms to check: Kitchen, Master Bath, Bathrooms, Powder Room, Laundry, Mudroom, Pantry, Bar, Office, Utility, Closets.
-
-For each distinct wall or cabinet run, return a JSON object with:
-- "room": room name exactly as labeled on the plan
-- "location": which wall or position (e.g. "North wall", "South wall", "Island", "East wall")
-- "base_lf": lineal feet of base cabinets (floor-mounted, 34.5" tall) — number or null
-- "upper_lf": lineal feet of upper/wall cabinets (wall-mounted above counter) — number or null
-- "tall_lf": lineal feet of tall cabinets (floor-to-ceiling: pantry towers, oven surrounds, fridge surrounds) — number or null
-- "notes": brief note on anything notable (e.g. "includes island", "refrigerator opening", "window above sink")
+For EACH distinct wall or cabinet run, return a JSON object:
+- "room": room name as labeled on the plan (e.g. "Kitchen", "Master Bath")
+- "location": which wall or position (e.g. "North wall", "South wall", "Island", "Vanity")
+- "base_lf": lineal feet of base cabinets (floor-mounted ~34.5" tall) — number or null
+- "upper_lf": lineal feet of upper/wall cabinets — number or null
+- "tall_lf": lineal feet of tall cabinets (pantry towers, oven/fridge surrounds, floor-to-ceiling) — number or null
+- "notes": brief note (e.g. "includes sink", "refrigerator opening", "window above")
+- "bbox": [x, y, w, h] — bounding box as PERCENTAGES (0–100) of the image width/height.
+  x,y = top-left corner of the cabinet run area. w,h = width and height of the area.
+  Be as accurate as possible. A wall run might be [5, 30, 40, 8]. An island might be [35, 45, 20, 12].
 
 Important rules:
-- Scan the ENTIRE image carefully before responding — every room, every wall
-- Use the plan's dimension annotations or scale bar to estimate lineal footage as accurately as possible
-- A standard kitchen base run might be 8–12 LF per wall; a bathroom vanity 3–6 LF
-- List each wall separately — do not combine multiple walls into one entry
-- Island base cabinets count as base_lf with location "Island"
+- Scan the ENTIRE image — every room, every wall, every corner
+- List each wall separately; do not combine multiple walls into one entry
+- Islands count as base_lf with location "Island"
 - Vanities count as base_lf
-- If upper cabinets don't run the full length of base cabinets, estimate separately
+- Use dimension annotations or scale bars visible in the plan to estimate lineal footage
 - Return ONLY a valid JSON array, no markdown, no explanation
-- Return [] only if this page has truly no cabinetry (e.g. cover sheet, site plan)`;
+- Return [] if this page has truly no cabinetry (cover sheet, site plan, etc.)`;
 
     const response = await fetch('/.netlify/functions/analyze', {
       method: 'POST',
@@ -344,13 +389,18 @@ Important rules:
       const cleaned = rawText.replace(/```json/gi,'').replace(/```/g,'').trim();
       const parsed = JSON.parse(cleaned);
       return Array.isArray(parsed) ? parsed : [];
-    } catch { return []; }
+    } catch {
+      console.warn('Parse error:', rawText);
+      return [];
+    }
   }
+
+  // ─── DEDUPLICATION ────────────────────────────────────────────────────────────
 
   function deduplicateResults(results) {
     const map = new Map();
     for (const r of results) {
-      const key = `${norm(r.room)}|${norm(r.location)}`;
+      const key = `${norm(r.room)}|${norm(r.location)}|${r._page}`;
       if (!map.has(key)) map.set(key, { ...r });
       else {
         const ex = map.get(key);
@@ -364,8 +414,10 @@ Important rules:
 
   function norm(s) { return (s||'').toLowerCase().replace(/\s+/g,' ').trim(); }
 
+  // ─── TABLE RENDERING ─────────────────────────────────────────────────────────
+
   function lf(val) {
-    if (val == null || val === 0) return `<span style="color:var(--text-dim)">—</span>`;
+    if (!val) return `<span style="color:var(--text-dim)">—</span>`;
     return `<span class="qty-pill">${Number(val).toFixed(1)}</span>`;
   }
 
@@ -374,76 +426,279 @@ Important rules:
     const tbody = document.getElementById('resultsBody');
     tbody.innerHTML = '';
     document.getElementById('resultCount').textContent = results.length;
+
     if (!results.length) { document.getElementById('emptyState').style.display = 'block'; return; }
     document.getElementById('emptyState').style.display = 'none';
+
     results.sort((a,b) => (a.room||'').localeCompare(b.room||'') || (a.location||'').localeCompare(b.location||''));
 
-    // Group by room for subtotal rows
-    let lastRoom = null;
-    for (const r of results) {
-      // Room label row if new room
-      if (r.room !== lastRoom) {
-        const roomResults = results.filter(x => x.room === r.room);
-        const totalBase  = roomResults.reduce((s,x) => s + (x.base_lf  || 0), 0);
-        const totalUpper = roomResults.reduce((s,x) => s + (x.upper_lf || 0), 0);
-        const totalTall  = roomResults.reduce((s,x) => s + (x.tall_lf  || 0), 0);
-        const grandTotal = totalBase + totalUpper + totalTall;
-        if (lastRoom !== null) {
-          // subtotal row for previous room
-          const sub = document.createElement('tr');
-          sub.style.cssText = 'background:rgba(46,134,222,0.07); font-weight:600;';
-          const prevRoomResults = results.filter(x => x.room === lastRoom);
-          const pb = prevRoomResults.reduce((s,x) => s+(x.base_lf||0),0);
-          const pu = prevRoomResults.reduce((s,x) => s+(x.upper_lf||0),0);
-          const pt = prevRoomResults.reduce((s,x) => s+(x.tall_lf||0),0);
-          const pg = pb+pu+pt;
-          sub.innerHTML = `<td style="color:var(--text-dim); font-size:0.7rem; font-family:var(--mono); letter-spacing:0.08em;" colspan="2">SUBTOTAL — ${lastRoom}</td><td><span class="qty-pill" style="color:var(--blue-light)">${pb.toFixed(1)}</span></td><td><span class="qty-pill" style="color:var(--amber)">${pu.toFixed(1)}</span></td><td><span class="qty-pill" style="color:var(--green)">${pt.toFixed(1)}</span></td><td><span class="qty-pill" style="border-color:var(--blue-light); color:var(--text-bright)">${pg.toFixed(1)}</span></td><td></td>`;
-          tbody.appendChild(sub);
-        }
-        lastRoom = r.room;
+    const rooms = [...new Set(results.map(r => r.room))];
+
+    for (const room of rooms) {
+      const roomRows = results.filter(r => r.room === room);
+
+      for (const r of roomRows) {
+        const total = (r.base_lf||0)+(r.upper_lf||0)+(r.tall_lf||0);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.room||'—'}</td>
+          <td style="color:var(--text-dim)">${r.location||'—'}</td>
+          <td>${lf(r.base_lf)}</td>
+          <td>${lf(r.upper_lf)}</td>
+          <td>${lf(r.tall_lf)}</td>
+          <td>${total > 0 ? lf(total) : lf(null)}</td>
+          <td><span class="dim-text">${r.notes||''}</span></td>`;
+        tbody.appendChild(tr);
       }
 
-      const total = (r.base_lf||0) + (r.upper_lf||0) + (r.tall_lf||0);
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${r.room||'—'}</td>
-        <td style="color:var(--text-dim)">${r.location||'—'}</td>
-        <td>${lf(r.base_lf)}</td>
-        <td>${lf(r.upper_lf)}</td>
-        <td>${lf(r.tall_lf)}</td>
-        <td>${total > 0 ? lf(total) : lf(null)}</td>
-        <td><span class="dim-text">${r.notes||''}</span></td>`;
-      tbody.appendChild(tr);
-    }
-
-    // Final subtotal
-    if (lastRoom) {
-      const prevRoomResults = results.filter(x => x.room === lastRoom);
-      const pb = prevRoomResults.reduce((s,x) => s+(x.base_lf||0),0);
-      const pu = prevRoomResults.reduce((s,x) => s+(x.upper_lf||0),0);
-      const pt = prevRoomResults.reduce((s,x) => s+(x.tall_lf||0),0);
+      // Subtotal row per room
+      const pb = roomRows.reduce((s,x)=>s+(x.base_lf||0),0);
+      const pu = roomRows.reduce((s,x)=>s+(x.upper_lf||0),0);
+      const pt = roomRows.reduce((s,x)=>s+(x.tall_lf||0),0);
       const pg = pb+pu+pt;
       const sub = document.createElement('tr');
-      sub.style.cssText = 'background:rgba(46,134,222,0.07); font-weight:600;';
-      sub.innerHTML = `<td style="color:var(--text-dim); font-size:0.7rem; font-family:var(--mono); letter-spacing:0.08em;" colspan="2">SUBTOTAL — ${lastRoom}</td><td><span class="qty-pill" style="color:var(--blue-light)">${pb.toFixed(1)}</span></td><td><span class="qty-pill" style="color:var(--amber)">${pu.toFixed(1)}</span></td><td><span class="qty-pill" style="color:var(--green)">${pt.toFixed(1)}</span></td><td><span class="qty-pill" style="border-color:var(--blue-light); color:var(--text-bright)">${pg.toFixed(1)}</span></td><td></td>`;
+      sub.style.cssText = 'background:rgba(46,134,222,0.07);font-weight:600;';
+      sub.innerHTML = `
+        <td colspan="2" style="color:var(--text-dim);font-size:0.68rem;font-family:var(--mono);letter-spacing:0.08em;">SUBTOTAL — ${room}</td>
+        <td><span class="qty-pill" style="color:var(--blue-light)">${pb.toFixed(1)}</span></td>
+        <td><span class="qty-pill" style="color:var(--amber)">${pu.toFixed(1)}</span></td>
+        <td><span class="qty-pill" style="color:var(--green)">${pt.toFixed(1)}</span></td>
+        <td><span class="qty-pill" style="border-color:var(--blue-light);color:var(--text-bright)">${pg.toFixed(1)}</span></td>
+        <td></td>`;
       tbody.appendChild(sub);
     }
 
-    // Grand total row
-    const allBase  = results.reduce((s,x) => s+(x.base_lf ||0),0);
-    const allUpper = results.reduce((s,x) => s+(x.upper_lf||0),0);
-    const allTall  = results.reduce((s,x) => s+(x.tall_lf ||0),0);
-    const allTotal = allBase + allUpper + allTall;
+    // Grand total
+    const ab = results.reduce((s,x)=>s+(x.base_lf||0),0);
+    const au = results.reduce((s,x)=>s+(x.upper_lf||0),0);
+    const at = results.reduce((s,x)=>s+(x.tall_lf||0),0);
+    const ag = ab+au+at;
     const grand = document.createElement('tr');
-    grand.style.cssText = 'background:rgba(46,134,222,0.13); font-weight:700; border-top: 2px solid var(--border);';
-    grand.innerHTML = `<td style="font-family:var(--mono); font-size:0.7rem; letter-spacing:0.1em;" colspan="2">GRAND TOTAL</td><td><span class="qty-pill" style="color:var(--blue-light); font-weight:700">${allBase.toFixed(1)}</span></td><td><span class="qty-pill" style="color:var(--amber); font-weight:700">${allUpper.toFixed(1)}</span></td><td><span class="qty-pill" style="color:var(--green); font-weight:700">${allTall.toFixed(1)}</span></td><td><span class="qty-pill" style="border-color:var(--blue-light); color:var(--text-bright); font-weight:700">${allTotal.toFixed(1)}</span></td><td></td>`;
+    grand.style.cssText = 'background:rgba(46,134,222,0.13);font-weight:700;border-top:2px solid var(--border);';
+    grand.innerHTML = `
+      <td colspan="2" style="font-family:var(--mono);font-size:0.68rem;letter-spacing:0.1em;">GRAND TOTAL</td>
+      <td><span class="qty-pill" style="color:var(--blue-light);font-weight:700">${ab.toFixed(1)}</span></td>
+      <td><span class="qty-pill" style="color:var(--amber);font-weight:700">${au.toFixed(1)}</span></td>
+      <td><span class="qty-pill" style="color:var(--green);font-weight:700">${at.toFixed(1)}</span></td>
+      <td><span class="qty-pill" style="border-color:var(--blue-light);color:var(--text-bright);font-weight:700">${ag.toFixed(1)}</span></td>
+      <td></td>`;
     tbody.appendChild(grand);
   }
+
+  // ─── PDF MARKUP GENERATION ───────────────────────────────────────────────────
+
+  async function generatePDF() {
+    if (!allResults.length || !pageCanvases.length) return;
+    const btn = document.getElementById('pdfBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Building PDF...';
+
+    try {
+      const { jsPDF } = window.jspdf;
+
+      // Color map: base=blue, upper=amber, tall=green
+      const COLORS = {
+        base:  { fill: [46, 134, 222],  stroke: [30, 100, 180] },
+        upper: { fill: [249, 168, 37],  stroke: [200, 130, 20] },
+        tall:  { fill: [38, 222, 129],  stroke: [20, 170, 95]  },
+      };
+
+      const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'letter' });
+      const pageW = pdf.internal.pageSize.getWidth();
+      const pageH = pdf.internal.pageSize.getHeight();
+
+      for (let p = 0; p < pageCanvases.length; p++) {
+        const canvas = pageCanvases[p];
+        const pageResults = allResults.filter(r => r._page === (p + 1));
+
+        // Draw overlays on a copy of the canvas
+        const marked = document.createElement('canvas');
+        marked.width = canvas.width;
+        marked.height = canvas.height;
+        const ctx = marked.getContext('2d');
+        ctx.drawImage(canvas, 0, 0);
+
+        for (const r of pageResults) {
+          const bbox = r.bbox;
+          if (!bbox || bbox.length < 4) continue;
+
+          const [xp, yp, wp, hp] = bbox;
+          const x = (xp / 100) * canvas.width;
+          const y = (yp / 100) * canvas.height;
+          const w = (wp / 100) * canvas.width;
+          const h = (hp / 100) * canvas.height;
+
+          // Determine dominant type
+          const hasBase  = r.base_lf  > 0;
+          const hasUpper = r.upper_lf > 0;
+          const hasTall  = r.tall_lf  > 0;
+          const colorKey = hasTall ? 'tall' : hasUpper ? 'upper' : 'base';
+          const col = COLORS[colorKey];
+
+          // Semi-transparent fill
+          ctx.globalAlpha = 0.25;
+          ctx.fillStyle = `rgb(${col.fill.join(',')})`;
+          ctx.fillRect(x, y, w, h);
+
+          // Solid border
+          ctx.globalAlpha = 0.9;
+          ctx.strokeStyle = `rgb(${col.stroke.join(',')})`;
+          ctx.lineWidth = Math.max(canvas.width / 400, 3);
+          ctx.strokeRect(x, y, w, h);
+
+          // Label background
+          const labelText = `${r.room} – ${r.location||''} | B:${r.base_lf||0} U:${r.upper_lf||0} T:${r.tall_lf||0} LF`;
+          const fontSize = Math.max(canvas.width / 100, 14);
+          ctx.font = `bold ${fontSize}px sans-serif`;
+          const metrics = ctx.measureText(labelText);
+          const labelW = metrics.width + 12;
+          const labelH = fontSize + 10;
+
+          ctx.globalAlpha = 0.88;
+          ctx.fillStyle = `rgb(${col.fill.join(',')})`;
+          ctx.fillRect(x, y - labelH - 2, labelW, labelH);
+
+          // Label text
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = '#fff';
+          ctx.fillText(labelText, x + 6, y - 7);
+        }
+
+        ctx.globalAlpha = 1;
+
+        // Add legend at bottom of canvas
+        const legY = canvas.height - 60;
+        ctx.fillStyle = 'rgba(11,21,32,0.82)';
+        ctx.fillRect(0, legY, canvas.width, 60);
+        const legItems = [
+          { label: 'Base Cabinets', col: COLORS.base.fill },
+          { label: 'Upper Cabinets', col: COLORS.upper.fill },
+          { label: 'Tall Cabinets', col: COLORS.tall.fill },
+        ];
+        const fs = Math.max(canvas.width / 120, 12);
+        ctx.font = `bold ${fs}px sans-serif`;
+        let lx = 30;
+        for (const item of legItems) {
+          ctx.fillStyle = `rgb(${item.col.join(',')})`;
+          ctx.fillRect(lx, legY + 18, fs + 4, fs + 4);
+          ctx.fillStyle = '#d0e4f7';
+          ctx.fillText(item.label, lx + fs + 10, legY + 18 + fs);
+          lx += ctx.measureText(item.label).width + fs + 30;
+        }
+
+        // Add page to jsPDF
+        if (p > 0) pdf.addPage();
+
+        const imgData = marked.toDataURL('image/jpeg', 0.88);
+        // Fit to page preserving aspect ratio
+        const aspect = canvas.width / canvas.height;
+        let imgW = pageW - 40;
+        let imgH = imgW / aspect;
+        if (imgH > pageH - 40) { imgH = pageH - 40; imgW = imgH * aspect; }
+        const offX = (pageW - imgW) / 2;
+        const offY = (pageH - imgH) / 2;
+
+        pdf.addImage(imgData, 'JPEG', offX, offY, imgW, imgH);
+
+        // Page footer
+        pdf.setFontSize(8);
+        pdf.setTextColor(100, 140, 174);
+        pdf.text(`Ferris Cabinetry — Cabinet Scanner  |  Page ${p+1} of ${pageCanvases.length}  |  ${new Date().toLocaleDateString()}`, pageW/2, pageH - 8, { align: 'center' });
+      }
+
+      // Summary page
+      pdf.addPage();
+      pdf.setFillColor(11, 21, 32);
+      pdf.rect(0, 0, pageW, pageH, 'F');
+
+      pdf.setFontSize(18);
+      pdf.setTextColor(234, 244, 255);
+      pdf.text('Cabinetry Schedule', 40, 45);
+
+      pdf.setFontSize(9);
+      pdf.setTextColor(107, 140, 174);
+      pdf.text(`Generated ${new Date().toLocaleDateString()} — ${selectedFile?.name || 'plan'}`, 40, 60);
+
+      // Table header
+      const cols = [160, 130, 60, 60, 60, 65, 130];
+      const headers = ['Room', 'Wall / Location', 'Base LF', 'Upper LF', 'Tall LF', 'Total LF', 'Notes'];
+      let ty = 85;
+
+      pdf.setFillColor(22, 36, 54);
+      pdf.rect(20, ty - 12, pageW - 40, 18, 'F');
+      pdf.setFontSize(7.5);
+      pdf.setTextColor(107, 140, 174);
+      let tx = 28;
+      headers.forEach((h, i) => { pdf.text(h, tx, ty); tx += cols[i]; });
+      ty += 12;
+
+      const deduped = deduplicateResults(allResults);
+      deduped.sort((a,b) => (a.room||'').localeCompare(b.room||''));
+      const rooms = [...new Set(deduped.map(r => r.room))];
+
+      for (const room of rooms) {
+        const rrows = deduped.filter(r => r.room === room);
+
+        for (const r of rrows) {
+          if (ty > pageH - 30) { pdf.addPage(); ty = 40; }
+          const total = (r.base_lf||0)+(r.upper_lf||0)+(r.tall_lf||0);
+          pdf.setFontSize(8);
+          pdf.setTextColor(208, 228, 247);
+          tx = 28;
+          const cells = [r.room, r.location||'—', fmtLF(r.base_lf), fmtLF(r.upper_lf), fmtLF(r.tall_lf), total>0?total.toFixed(1):'—', (r.notes||'').substring(0,22)];
+          cells.forEach((c, i) => { pdf.text(String(c), tx, ty); tx += cols[i]; });
+          ty += 12;
+          pdf.setDrawColor(30, 58, 95);
+          pdf.line(20, ty - 4, pageW - 20, ty - 4);
+        }
+
+        // Subtotal
+        const pb = rrows.reduce((s,x)=>s+(x.base_lf||0),0);
+        const pu = rrows.reduce((s,x)=>s+(x.upper_lf||0),0);
+        const pt = rrows.reduce((s,x)=>s+(x.tall_lf||0),0);
+        if (ty > pageH - 30) { pdf.addPage(); ty = 40; }
+        pdf.setFillColor(22, 36, 54);
+        pdf.rect(20, ty - 10, pageW - 40, 14, 'F');
+        pdf.setFontSize(7.5);
+        pdf.setTextColor(84, 160, 255);
+        tx = 28;
+        [`Subtotal — ${room}`, '', pb.toFixed(1), pu.toFixed(1), pt.toFixed(1), (pb+pu+pt).toFixed(1), ''].forEach((c,i)=>{ pdf.text(c, tx, ty); tx += cols[i]; });
+        ty += 16;
+      }
+
+      // Grand total
+      const ab = deduped.reduce((s,x)=>s+(x.base_lf||0),0);
+      const au = deduped.reduce((s,x)=>s+(x.upper_lf||0),0);
+      const at = deduped.reduce((s,x)=>s+(x.tall_lf||0),0);
+      if (ty > pageH - 30) { pdf.addPage(); ty = 40; }
+      pdf.setFillColor(46, 100, 180);
+      pdf.rect(20, ty - 10, pageW - 40, 16, 'F');
+      pdf.setFontSize(9);
+      pdf.setTextColor(234, 244, 255);
+      tx = 28;
+      [`GRAND TOTAL`, '', ab.toFixed(1), au.toFixed(1), at.toFixed(1), (ab+au+at).toFixed(1), ''].forEach((c,i)=>{ pdf.text(c, tx, ty); tx += cols[i]; });
+
+      const planName = (selectedFile?.name || 'plan').replace('.pdf','');
+      pdf.save(`${planName}-cabinet-markup.pdf`);
+      log('Marked-up PDF downloaded!', 'ok');
+
+    } catch (err) {
+      log(`PDF error: ${err.message}`, 'err');
+      console.error(err);
+    }
+
+    btn.disabled = false;
+    btn.textContent = '⬡ Download Marked-Up PDF';
+  }
+
+  function fmtLF(v) { return v ? Number(v).toFixed(1) : '—'; }
+
+  // ─── CSV EXPORT ───────────────────────────────────────────────────────────────
 
   function exportCSV() {
     if (!allResults.length) return;
     const rows = deduplicateResults(allResults);
-    rows.sort((a,b) => (a.room||'').localeCompare(b.room||'') || (a.location||'').localeCompare(b.location||''));
+    rows.sort((a,b) => (a.room||'').localeCompare(b.room||''));
     const headers = ['Room / Space','Wall / Location','Base LF','Upper LF','Tall LF','Total LF','Notes'];
     const csv = [headers, ...rows.map(r => {
       const total = (r.base_lf||0)+(r.upper_lf||0)+(r.tall_lf||0);
@@ -455,7 +710,7 @@ Important rules:
     a.click();
   }
 
-  function esc(v) { const s=(v||'').toString().replace(/"/g,'""'); return /[,"\n]/.test(s) ? `"${s}"` : s; }
+  function esc(v) { const s=(v||'').toString().replace(/"/g,'""'); return /[,"\n]/.test(s)?`"${s}"`:s; }
   function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 </script>
 </body>
